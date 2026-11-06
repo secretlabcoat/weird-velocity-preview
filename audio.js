@@ -161,7 +161,7 @@ export function sfx(name) {
   osc.stop(t + dur + 0.02);
 }
 
-document.addEventListener("visibilitychange", () => {
+if (typeof document !== "undefined") document.addEventListener("visibilitychange", () => {
   if (!ctx) return;
   if (document.hidden) {
     ctx.suspend().catch(() => {});

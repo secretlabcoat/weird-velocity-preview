@@ -59,7 +59,7 @@
     }
   </script>
   <script type="module">
-    if (new URLSearchParams(location.search).get("dev") === "1") {
+    if (new URLSearchParams(location.search).get("dev") !== "0") {
       import("./devbot.js").catch((err) => console.error(err));
     }
   </script>

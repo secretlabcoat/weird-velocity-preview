@@ -3,7 +3,8 @@
 
 import { chime, primeAudio } from "./audio.js";
 
-const REPO = "secretlabcoat/weird-velocity";
+const REPO = "secretlabcoat/weird-velocity-preview";
+const BRANCH = "preview";
 const DEFAULT_BASE = "https://generativelanguage.googleapis.com/v1beta/openai";
 const DEFAULT_MODEL = "gemini-flash-latest";
 const FALLBACK_MODEL = "gemini-flash-lite-latest";
@@ -38,10 +39,10 @@ const FILE_GUIDE = [
 ];
 
 const LS = {
-  base: "wv.dev.llmBase",
-  key: "wv.dev.llmKey",
-  model: "wv.dev.llmModel",
-  gh: "wv.dev.githubToken",
+  base: "wv.preview.dev.llmBase",
+  key: "wv.preview.dev.llmKey",
+  model: "wv.preview.dev.llmModel",
+  gh: "wv.preview.dev.githubToken",
 };
 
 const ALLOWED = new Set(FILE_GUIDE.map(([path]) => path));
@@ -744,7 +745,7 @@ function install() {
       </form>
     </div>
     <div id="dev-status" role="status" aria-live="polite">
-      <div id="dev-status-main">Keys stay on this phone only.</div>
+      <div id="dev-status-main">Preview editor — live game unchanged. Keys stay on this phone only.</div>
       <p id="dev-status-detail" hidden></p>
     </div>
   `;
@@ -773,7 +774,7 @@ function install() {
 
   function setHidden(hide) {
     isHidden = hide;
-    store("wv-dev-hidden", hide ? "1" : "0");
+    store("wv-preview-dev-hidden", hide ? "1" : "0");
     root.hidden = hide;
     showBtn.hidden = !hide;
     if (hide) {
@@ -824,7 +825,7 @@ function install() {
 
   function showDone(files, url) {
     statusMain.className = "ok";
-    statusMain.textContent = "Done! Saved. The live game updates in about a minute — reload then. ";
+    statusMain.textContent = "Done! Saved. The preview updates in about a minute — reload then. ";
     if (url) {
       const link = document.createElement("a");
       link.href = url;
@@ -1020,7 +1021,7 @@ function install() {
           if (repo.permissions && repo.permissions.push === true) {
             add(true, "GitHub token can write to this repo.");
           } else {
-            const read = await fetch(contentsUrl("NOTES.md") + "?ref=main", { headers: ghHeaders(token) });
+            const read = await fetch(contentsUrl("NOTES.md") + "?ref=" + encodeURIComponent(BRANCH), { headers: ghHeaders(token) });
             if (read.ok) add(false, "GitHub token can read this repo but not write. It needs Contents: Read and write.");
             else add(false, "GitHub token can't read this repo.");
           }
@@ -1128,7 +1129,7 @@ function install() {
       }
       const originals = [];
       for (const path of paths) {
-        const got = await ghJson(contentsUrl(path) + "?ref=main", token);
+        const got = await ghJson(contentsUrl(path) + "?ref=" + encodeURIComponent(BRANCH), token);
         originals.push({ path, sha: got.sha, text: b64ToUtf8(got.content || "") });
       }
       const words = searchWords(instruction);
@@ -1268,7 +1269,7 @@ function install() {
             message: ("devbot: " + instruction.replace(/\s+/g, " ")).slice(0, 72),
             content: utf8ToB64(edit.body),
             sha: edit.sha,
-            branch: "main",
+            branch: BRANCH,
           }),
         });
         saved.push(edit.path);
@@ -1281,7 +1282,7 @@ function install() {
       }
       const warning = dataOnlyBehaviorWarning(instruction, saved);
       if (warning) logStep(warning);
-      logStep("Publishing to the live site (about 1–2 min)…");
+      logStep("Publishing to the preview (about 1–2 min)…");
       const published = await publishPages(token, lastSha);
       if (published === "errored") {
         noteOutcome(saved);
@@ -1324,7 +1325,7 @@ function install() {
 
   function showLive(summary, warning) {
     const sentence = String(summary || "").replace(/[.!?]+$/, "");
-    const label = "Done — your change is live: " + sentence + ". Tap to reload.";
+    const label = "Done — your preview is ready: " + sentence + ". Tap to reload.";
     reloadBtn.hidden = false;
     setHidden(false);
     reloadBtn.textContent = label;
@@ -1338,7 +1339,7 @@ function install() {
 
   llmModel();
   llmBase();
-  if (load("wv-dev-hidden") === "1") {
+  if (load("wv-preview-dev-hidden") === "1") {
     setHidden(true);
   }
 }

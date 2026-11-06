@@ -6,7 +6,7 @@ It is an original game in the tradition of classic pocket space traders. Nothing
 
 ## Play
 
-Hosted on GitHub Pages from the repository root: [https://secretlabcoat.github.io/weird-velocity/](https://secretlabcoat.github.io/weird-velocity/)
+Hosted on GitHub Pages from the repository root: [https://secretlabcoat.github.io/weird-velocity-preview/](https://secretlabcoat.github.io/weird-velocity-preview/)
 
 Locally, serve this folder and open the URL. ES modules do not load from `file://`.
 
@@ -30,7 +30,9 @@ The chart is not a teleporter. Beacons are.
 
 ## Dev bot
 
-Open the game with `?dev=1`. A panel at the bottom can edit one source file: it sends the file and your instruction to an OpenAI-compatible `/chat/completions` endpoint, then commits the returned file to `secretlabcoat/weird-velocity` on `main` with the GitHub contents API.
+The preview opens with the in-game editor enabled (use `?dev=0` to hide it). Describe a change in the bottom panel. It sends selected source snippets to your OpenAI-compatible API, then saves edits only to `secretlabcoat/weird-velocity-preview` on branch `preview`. GitHub Pages rebuilds the preview; tap reload when ready. The live game and its repository are not modified. Preview saves and editor settings have separate storage keys.
+
+Use a fine-grained GitHub token restricted to **weird-velocity-preview**, with Contents read/write and Pages read permission. Configure your own AI endpoint/key in the gear menu; provider usage may be billed. Credentials stay in this browser, and are sent only to their respective service.
 
 The gear button stores the LLM base URL, API key, model, and a GitHub fine-grained token in this browser's `localStorage` only. If those boxes are empty they start as Gemini (`https://generativelanguage.googleapis.com/v1beta/openai`, `gemini-flash-latest`). Test my keys checks the AI and that the token can write. The bot picks which files to change. The LLM endpoint must allow browser requests, or the panel shows the error.
 
